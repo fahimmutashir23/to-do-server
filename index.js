@@ -21,9 +21,10 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const toDoCollection = client.db("TaskDB").collection("toDos");
+    const previousCollection = client.db("TaskDB").collection("previous");
 
 
 
@@ -58,26 +59,19 @@ async function run() {
 
 
     // On Going API
-    app.get("/onGoing", async (req, res) => {
+    app.get("/previous", async (req, res) => {
       const email = req.query.email;
       let user;
       if (email) {
         user = { email: email };
       }
-      const result = await onGoingCollection.find(user).toArray();
+      const result = await previousCollection.find(user).toArray();
       res.send(result);
     });
 
-    app.post("/onGoing", async (req, res) => {
+    app.post("/previous", async (req, res) => {
       const data = req.body;
-      const result = await onGoingCollection.insertOne(data);
-      res.send(result);
-    });
-
-    // Completed API
-    app.post("/completed", async (req, res) => {
-      const data = req.body;
-      const result = await completeCollection.insertOne(data);
+      const result = await previousCollection.insertOne(data);
       res.send(result);
     });
 
@@ -108,10 +102,10 @@ async function run() {
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // await client.close();
   }
